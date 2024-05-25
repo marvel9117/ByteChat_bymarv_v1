@@ -58,7 +58,7 @@ def home():
 
 @app.route("/room")
 def room():
-    return reander_template("room.html")
+    return render_template("room.html")
 
 if __name__ == "__main__":
     socketio.run(app, debug=True)
