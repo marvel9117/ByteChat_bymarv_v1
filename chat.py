@@ -48,10 +48,10 @@ def home():
         elif code not in rooms:
              return render_template("home.html", error="Rooms does not exist.", code=code, name=name)
 
-         #store information about the user / store data in a section intead of autentication 
-         session["room"] = room
-         session["name"] = name
-         return redirect(url_for("room"))
+         #store information about the user / store data in a section intead of autentication
+        session["room"] = room
+        session["name"] = name
+        return redirect(url_for("room"))
 
     return render_template("home.html")
 
