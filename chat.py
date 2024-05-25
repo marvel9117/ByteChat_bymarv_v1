@@ -27,7 +27,7 @@ def generate_unique_code(length):
 def home():
     session.clear()
     if request.method == "POST":
-        name = rquest.form.get("name")
+        name = request.form.get("name")
         code = request.form.get("code")
         join = request.form.get("join", False)
         create = request.form.get("create", False)
