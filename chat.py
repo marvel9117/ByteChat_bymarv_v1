@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from flask import Flask, render_template, request, session, redirect, url_for
-from flask_socketio import join_room, leave_room, SocketIO
+from flask_socketio import join_room, leave_room, SocketIO, send
 import random
 from string import ascii_uppercase
 
