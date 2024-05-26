@@ -75,7 +75,7 @@ def connect(auth):
         leave_room(room)
         return
 
-    join_room(rooom)
+    join_room(room)
     send({"nmae": name, "message": "has entered the room"}, to=room)
     rooms[room]["memebers"] += 1
     print(f"{name} joined room {room}")
