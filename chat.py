@@ -77,7 +77,7 @@ def connect(auth):
 
     join_room(room)
     send({"name": name, "message": "has entered the room"}, to=room)
-    rooms[room]["memebers"] += 1
+    rooms[room]["members"] += 1
     print(f"{name} joined room {room}")
 
 if __name__ == "__main__":
