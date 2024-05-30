@@ -5,6 +5,8 @@ Class basemodel in which other classes will inherit from
 
 import uuid
 from datetime import datetime
+import models
+
 
 
 class BaseModel:
@@ -43,6 +45,7 @@ class BaseModel:
                             date_time_format))
                 else:
                     setattr(self, key, value)
+        models.storage.new(self)
 
     def __str__(self):
         """
@@ -60,6 +63,7 @@ class BaseModel:
         with the current datetime
         """
         self.updated_at = datetime.now()
+        models.storage.save()
 
     def to_dict(self):
         """
@@ -68,22 +72,8 @@ class BaseModel:
         serialization/deserialization process: create a dictionary
         representation with “simple object type” of our BaseModel
         """
-        inst_dict = self.__dict__.copy()
-        inst_dict["__class__"] = self.__class__.__name__
-        inst_dict["created_at"] = self.created_at.isoformat()
-        inst_dict["updated_at"] = self.updated_at.isoformat()
-        return inst_dict
-
-if __name__ == "__main__":
-    user = BaseModel()
-    user.name = "marvel"
-    print("-------srt----")
-    print(user)
-    print("-----strend----")
-    print("-----update time----")
-    user.save()
-    print(user)
-    print("---------------------------")
-    print("------------------------TO DICT -----------------------------")
-    user_json = user.to_dict()
-    print(user_json)
+        my_dict = self.__dict__.copy()
+        my_dict["__class__"] = type(self).__name__
+        my_dict["created_at"] = my_dict["created_at"].isoformat()
+        my_dict["updated_at"] = my_dict["updated_at"].isoformat()
+        return my_dict
