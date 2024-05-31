@@ -4,6 +4,7 @@
     <h2>Chat Room: {{ code }}</h2>
     <div class="messages" id="messages"></div>
     <div class="inputs">
+	<button type="button" class="leave-btn" onclick="leaveRoom()">Leave Room</button>
         <input type="text" rows="3" placeholder="message" name="message" id="message"/>
         <button type="button" name="send" id="send-btn" onClick="sendMessage()">Send</button>
     </div>
@@ -37,6 +38,11 @@
         socketio.emit("message", {data: message.value });
         message.value = "";
     };
+
+   const leaveRoom = () => {
+        window.location.href = "/";
+   };
+
 </script>
 <script type="text/javascript">
     {% for msg in messages %}
