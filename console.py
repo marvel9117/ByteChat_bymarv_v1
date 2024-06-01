@@ -193,7 +193,7 @@ class BYTECommand(cmd.Cmd):
         objects = storage.all()
         command = shlex.split(arg)
 
-        if not arg:
+        if not command:
             print("** class name missing **")
             return
 
@@ -216,17 +216,12 @@ class BYTECommand(cmd.Cmd):
         """
         Called on an input line when the command prefix is not recognized.
         """
-        parts = line.split('(')  # Split the line by '(' instead of '.'
+        parts = line.split('.')  # Split the line by '.' instead of ','
 
-        if len(parts) == 1:
-            command = parts[0].strip()
-            
-            if '.' not in command:
-                print("** Invalid command format. **")
-                return
+        if len(parts) == 2:
+            class_name = parts[0].strip()
+            method_name = parts[1].rstrip('()').strip()  # Remove parentheses from method name
 
-            class_name, method_name = command.split('.')
-            
             if class_name not in self.valid_classes:
                 print("** Class doesn't exist. **")
                 return
@@ -235,28 +230,8 @@ class BYTECommand(cmd.Cmd):
                 method_func = getattr(self, self.method_mapping[method_name])
                 method_func(class_name)
                 return
-        elif len(parts) == 2:
-            command = parts[0].strip()
-            args = parts[1].rstrip(')')
-
-            class_method = command.strip()
-            if '.' not in class_method:
-                print("** Invalid command format. **")
-                return
-
-            class_name, method_name = class_method.split('.')
-            
-            if class_name not in self.valid_classes:
-                print("** Class doesn't exist. **")
-                return
-
-            if method_name in self.method_mapping:
-                method_func = getattr(self, self.method_mapping[method_name])
-                method_func(args)
-                return
 
         print("** Command not recognized. **")
-
 
 if __name__ == "__main__":
     BYTECommand().cmdloop()
