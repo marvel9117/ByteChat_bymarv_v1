@@ -6,6 +6,7 @@ deserializes JSON types
 import json
 import os
 from models.base_model import BaseModel
+from models.user import User
 
 class FileStorage:
     """
@@ -52,7 +53,7 @@ class FileStorage:
         """
         Deserializes the JSON file to __objects.
         """
-        classes = {'BaseModel': BaseModel}
+        classes = {'BaseModel': BaseModel, 'User': User}
 
         try:
             with open(self.__file_path, mode="r", encoding="utf-8") as f:

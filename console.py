@@ -8,6 +8,7 @@ import shlex
 from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
 from models import storage
+from models.user import User
 
 class BYTECommand(cmd.Cmd):
     """
@@ -158,8 +159,50 @@ class BYTECommand(cmd.Cmd):
             except Exception as e:
                 pass
 
-            
+    def do_all(self, arg):
+        """
+        print the string representation of all instances or a specific class
+        usage: all[class_name]
+        """
+        objects = storage.all()
 
+        commands = shlex.split(arg)
+
+        if len(commands) == 0:
+            for key, value in objects.items():
+                print(str(value))
+        elif commands[0] not in self.valid_classes:
+            print("** class doesn't exist **")
+        else:
+            for key, value in objects.items():
+                if key.split('.')[0] == commands[0]:
+                    print(str(value))
+
+    def default(self, line):
+        """
+        Default method called when the command is not recognized.
+        """
+        parts = line.split('.')
+        if len(parts) != 2:
+            print("Invalid command format. Please use <Class name>.all() format.")
+            return
+
+        class_name, method_name = parts
+        class_obj = globals().get(class_name)
+
+        if class_name not in self.valid_classes:
+            print(f"Class '{class_name}' does not exist or is not valid.")
+            return
+
+        if method_name != "all":
+            print(f"Method 'all()' does not exist for class '{class_name}'.")
+            return
+
+        method = getattr(self, f"do_{class_name.lower()}_all", None)
+
+        if not method:
+            print(f"Method 'do_{class_name.lower()}_all' does not exist for class '{class_name}'.")
+            return
 
 if __name__ == "__main__":
     BYTECommand().cmdloop()
