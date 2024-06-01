@@ -216,25 +216,47 @@ class BYTECommand(cmd.Cmd):
         """
         Called on an input line when the command prefix is not recognized.
         """
-        parts = line.split('.')
-        
-        if len(parts) == 2:
-            class_name = parts[0]
-            method = parts[1].replace("()", "")  # Remove the brackets from the method name
+        parts = line.split('(')  # Split the line by '(' instead of '.'
+
+        if len(parts) == 1:
+            command = parts[0].strip()
+            
+            if '.' not in command:
+                print("** Invalid command format. **")
+                return
+
+            class_name, method_name = command.split('.')
             
             if class_name not in self.valid_classes:
                 print("** Class doesn't exist. **")
                 return
-            
-            # Check if the method is in the method mapping dictionary
-            if method in self.method_mapping:
-                # Get the method function name from the mapping
-                method_func = getattr(self, self.method_mapping[method])
-                # Call the method function with class_name as argument
+
+            if method_name in self.method_mapping:
+                method_func = getattr(self, self.method_mapping[method_name])
                 method_func(class_name)
+                return
+        elif len(parts) == 2:
+            command = parts[0].strip()
+            args = parts[1].rstrip(')')
+
+            class_method = command.strip()
+            if '.' not in class_method:
+                print("** Invalid command format. **")
+                return
+
+            class_name, method_name = class_method.split('.')
+            
+            if class_name not in self.valid_classes:
+                print("** Class doesn't exist. **")
+                return
+
+            if method_name in self.method_mapping:
+                method_func = getattr(self, self.method_mapping[method_name])
+                method_func(args)
                 return
 
         print("** Command not recognized. **")
+
 
 if __name__ == "__main__":
     BYTECommand().cmdloop()
