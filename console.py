@@ -18,6 +18,12 @@ class BYTECommand(cmd.Cmd):
     prompt = '(BYTECHAT) '
     valid_classes = {'BaseModel', 'User'}
 
+    method_mapping = {
+        'all': 'do_all',
+        'count': 'do_count',
+        'show': 'do_show'
+    }
+
     def do_quit(self, line):
         """Quit command to exit the program """
         return True
@@ -177,32 +183,58 @@ class BYTECommand(cmd.Cmd):
             for key, value in objects.items():
                 if key.split('.')[0] == commands[0]:
                     print(str(value))
+    
+
+    def do_count(self, arg):
+        """
+        Counts and retrieves the number of instances of a class
+        Usage: <class name>.count()
+        """
+        objects = storage.all()
+        command = shlex.split(arg)
+
+        if not arg:
+            print("** class name missing **")
+            return
+
+        class_name = command[0]
+
+        if class_name not in self.valid_classes:
+            print("** invalid class name **")
+            return
+
+        count = 0
+
+        for obj in objects.values():
+            if obj.__class__.__name__ == class_name:
+                count += 1
+
+        print(count)
+
 
     def default(self, line):
         """
-        Default method called when the command is not recognized.
+        Called on an input line when the command prefix is not recognized.
         """
         parts = line.split('.')
-        if len(parts) != 2:
-            print("Invalid command format. Please use <Class name>.all() format.")
-            return
+        
+        if len(parts) == 2:
+            class_name = parts[0]
+            method = parts[1].replace("()", "")  # Remove the brackets from the method name
+            
+            if class_name not in self.valid_classes:
+                print("** Class doesn't exist. **")
+                return
+            
+            # Check if the method is in the method mapping dictionary
+            if method in self.method_mapping:
+                # Get the method function name from the mapping
+                method_func = getattr(self, self.method_mapping[method])
+                # Call the method function with class_name as argument
+                method_func(class_name)
+                return
 
-        class_name, method_name = parts
-        class_obj = globals().get(class_name)
-
-        if class_name not in self.valid_classes:
-            print(f"Class '{class_name}' does not exist or is not valid.")
-            return
-
-        if method_name != "all":
-            print(f"Method 'all()' does not exist for class '{class_name}'.")
-            return
-
-        method = getattr(self, f"do_{class_name.lower()}_all", None)
-
-        if not method:
-            print(f"Method 'do_{class_name.lower()}_all' does not exist for class '{class_name}'.")
-            return
+        print("** Command not recognized. **")
 
 if __name__ == "__main__":
     BYTECommand().cmdloop()
