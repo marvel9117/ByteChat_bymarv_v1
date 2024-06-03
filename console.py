@@ -212,26 +212,55 @@ class BYTECommand(cmd.Cmd):
         print(count)
 
 
+    def strip_clean(self, args):
+        """strips the argument and return a string of command
+        Args:
+            args: input list of args
+        Return:
+            returns string of argumetns
+        """
+        new_list = []
+        new_list.append(args[0])
+        try:
+            my_dict = eval(
+                args[1][args[1].find('{'):args[1].find('}')+1])
+        except Exception:
+            my_dict = None
+        if isinstance(my_dict, dict):
+            new_str = args[1][args[1].find('(')+1:args[1].find(')')]
+            new_list.append(((new_str.split(", "))[0]).strip('"'))
+            new_list.append(my_dict)
+            return new_list
+        new_str = args[1][args[1].find('(')+1:args[1].find(')')]
+        new_list.append(" ".join(new_str.split(", ")))
+        return " ".join(i for i in new_list)
+
+
     def default(self, line):
+        """retrieve all instances of a class and
+        retrieve the number of instances
         """
-        Called on an input line when the command prefix is not recognized.
-        """
-        parts = line.split('.')  # Split the line by '.' instead of ','
-
-        if len(parts) == 2:
-            class_name = parts[0].strip()
-            method_name = parts[1].rstrip('()').strip()  # Remove parentheses from method name
-
-            if class_name not in self.valid_classes:
-                print("** Class doesn't exist. **")
-                return
-
-            if method_name in self.method_mapping:
-                method_func = getattr(self, self.method_mapping[method_name])
-                method_func(class_name)
-                return
-
-        print("** Command not recognized. **")
+        my_list = line.split('.')
+        if len(my_list) >= 2:
+            if my_list[1] == "all()":
+                self.do_all(my_list[0])
+            elif my_list[1] == "count()":
+                self.do_count(my_list[0])
+            elif my_list[1][:4] == "show":
+                self.do_show(self.strip_clean(my_list))
+            elif my_list[1][:7] == "destroy":
+                self.do_destroy(self.strip_clean(my_list))
+            elif my_list[1][:6] == "update":
+                args = self.strip_clean(my_list)
+                if isinstance(args, list):
+                    obj = storage.all()
+                    key = args[0] + ' ' + args[1]
+                    for k, v in args[2].items():
+                        self.do_update(key + ' "{}" "{}"'.format(k, v))
+                else:
+                    self.do_update(args)
+        else:
+            cmd.Cmd.default(self, line)
 
 if __name__ == "__main__":
     BYTECommand().cmdloop()
