@@ -33,13 +33,13 @@ html, body {
 }
 
 .btn-1 {
-  background: #ff9966;
+  background: yellow; /* Change background color to yellow */
   border: none;
   color: #fff;
   cursor: pointer;
-  padding: 10px 20px;
+  padding: 15px 30px; /* Increase padding to make the button bigger */
   text-transform: uppercase;
-  font-size: .8rem;
+  font-size: 1rem; /* Increase font size */
   margin-top: 20px;
   transition: all .5s ease-in-out;
 }
