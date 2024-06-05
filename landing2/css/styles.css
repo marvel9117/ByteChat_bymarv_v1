@@ -33,7 +33,7 @@ html, body {
 }
 
 .btn-1 {
-  background: yellow; /* Change background color to yellow */
+  background: #FFD700;
   border: none;
   color: #fff;
   cursor: pointer;
